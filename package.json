@@ -20,10 +20,10 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phhu/aws-secrets-to-env.git"
+    "url": "git+https://github.com/philip-gcex/fix-log-decorate.git"
   },
   "bugs": {
-    "url": "https://github.com/phhu/aws-secrets-to-env/issues"
+    "url": "https://github.com/philip-gcex/fix-log-decorate/issues"
   },
   "license": "ISC",
   "dependencies": {
