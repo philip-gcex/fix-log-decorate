@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { pipeline } from 'node:stream'
 import map from 'through2-map'
 import chalk from 'chalk'
