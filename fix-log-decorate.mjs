@@ -2,7 +2,6 @@ import { pipeline } from 'node:stream'
 import map from 'through2-map'
 import chalk from 'chalk'
 import { msgTypeLU, tagLU } from './fixlu.mjs'
-// import {testMsg} from './testMsg.mjs'
 import minimist from 'minimist'
 
 const {
@@ -54,7 +53,6 @@ const highlightFieldNames = x => ('' + x).replace(/(\d+)=([^|]*)\|/g, fieldRepla
 
 pipeline(
   process.stdin,
-  //map(x=>testMsg),
   map(pipeAsDelim),
   map(highlightFieldNames),
   process.stdout,
