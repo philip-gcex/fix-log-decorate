@@ -21,7 +21,7 @@ const {
     usename: 1,
     usevalue: 1,
     uselookup: 1,
-    usenewline: 1,
+    usenewline: 0,
     skip: '',
     keep: '',
     delim: '|'
