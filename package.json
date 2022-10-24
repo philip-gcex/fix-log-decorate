@@ -1,0 +1,31 @@
+{
+  "name": "fix-log-decorate",
+  "version": "0.0.1",
+  "description": "Decorates FIX protocol messages in console to make them easier to read",
+  "bin": "./fix-log-decorate.mjs",
+  "main": "fix-log-decorate.mjs",
+  "scripts": {
+    "test": "./test.sh",
+    "tidy": "standard --fix",
+    "publish": "np"
+  },
+  "keywords": ["FIX", "Financial Information Exchange"],
+  "engines": {
+    "node": ">=12.0"
+  },
+  "author": "",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phhu/aws-secrets-to-env.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phhu/aws-secrets-to-env/issues"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.1.2",
+    "minimist": "^1.2.7",
+    "through2-map": "^3.0.0"
+  }
+}
