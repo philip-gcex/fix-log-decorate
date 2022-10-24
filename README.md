@@ -1,6 +1,5 @@
-A command line parser for FIX protocol messages.
+A command line parser for FIX protocol messages. This decorates FIX messages with colours fieldnames and value lookups, making them easer to read.
 
-You can pipe 
 
 # Example
 
@@ -9,10 +8,11 @@ echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=3
 node fix-log-decorate.mjs --uselookup=1 --usenumber=1 --usevalue=1 --delim="|" --usenewline=1
 ```
 
-Or using NPX:
+Or using NPX, and skipping heartbeats with `grep -v`:
 
 ```sh
 echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=30|10=003|8=FIX.4.1|9=61|35=A|34=1|49=BANZAI|" | \
+grep -v 35=0 | \
 npx fix-log-decorate --skip="8 9 10"
 ```
 
