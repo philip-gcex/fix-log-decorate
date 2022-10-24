@@ -15,6 +15,10 @@ grep -v 35=0 | \
 npx fix-log-decorate --skip="8 9 10"
 ```
 
+# Screenshot
+
+![](./screenshot.png)
+
 # Switches:
 
 ```
@@ -28,7 +32,11 @@ npx fix-log-decorate --skip="8 9 10"
     --delim=|
 ```
 
+`--use...` switches control which elements are shown. They default to on (1), except for `--usenewline`, which defaults to off (0). `--skip` and `--keep` allow exclusion or inclusion of fields by name or number.
+
+
 # References
 
 * Fix protocol: https://www.fixtrading.org/what-is-fix/
 * NPM: https://www.npmjs.com/package/fix-log-decorate
+* Online fix parser: https://fixparser.targetcompid.com/

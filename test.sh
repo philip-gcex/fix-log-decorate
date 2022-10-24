@@ -1,2 +1,3 @@
-echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=30|10=003|8=FIX.4.1|9=61|35=A|34=1|49=BANZAI|" | \
-node fix-log-decorate.mjs  --uselookup=1 --usenumber=1 --usevalue=1 --delim="|" --usenewline=1
+#echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=30|10=003|8=FIX.4.1|9=61|35=A|34=1|49=BANZAI|" | \
+echo "8=FIX.4.19=10435=F34=749=BANZAI52=20121105-23:25:2556=EXEC11=135215792530938=1000041=135215791235754=155=SPY10=1978=FIX.4.19=8235=334=949=EXEC52=20121105-23:25:2556=BANZAI45=758=Unsupported message type10=002" | \
+node fix-log-decorate.mjs  --uselookup=1 --usenumber=1 --usevalue=1 --delim="|" --usenewline=1 --skip="9 10"
