@@ -27,7 +27,8 @@ const {
     delim: '|'
   }
 })
-const [skipArr,keepArr] = [skip,keep].map( a=>a.split(' ').filter(x => x !== '') )
+const [skipArr,keepArr] = [skip,keep]
+  .map( a=>a.split(' ').filter(x => x !== '') )
 
 const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|')
 

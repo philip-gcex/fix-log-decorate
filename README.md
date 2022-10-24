@@ -19,3 +19,8 @@ Switches:
     --keep="8 10 MsgType"
     --delim=|
 ```
+
+# References
+
+* Fix protocol: https://www.fixtrading.org/what-is-fix/
+* NPM: https://www.npmjs.com/package/fix-log-decorate
