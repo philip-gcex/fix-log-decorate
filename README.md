@@ -38,6 +38,9 @@ npx fix-log-decorate --skip="8 9 10" --usenumber=0 --usenewline=1 --delim=" "
     --skip="9 35 BeginString",
     --keep="8 10 MsgType"
     --delim=|
+    
+    --help
+    --version
 ```
 
 * `--use...` switches control which elements are shown. They default to on (1), except for `--usenewline`, which defaults to off (0). 

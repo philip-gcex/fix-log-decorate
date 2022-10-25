@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
-import { pipeline } from 'node:stream'
+import { pipeline } from 'stream'
 import map from 'through2-map'
 import chalk from 'chalk'
 import { msgTypeLU, tagLU } from './fixlu.mjs'
 import minimist from 'minimist'
+
+import path from 'path'
+import fs from 'fs'
+import { fileURLToPath } from 'url'
 
 const {
   usenumber,
@@ -14,7 +18,9 @@ const {
   usenewline,
   skip,
   keep,
-  delim
+  delim,
+  help,
+  version,
 } = minimist(process.argv.slice(2), {
   default: {
     usenumber: 1,
@@ -24,9 +30,22 @@ const {
     usenewline: 0,
     skip: '',
     keep: '',
-    delim: '|'
+    delim: '|',
+    help: false,
+    version: false,
   }
 })
+
+if (help || version) {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const readFile = f => fs.readFileSync(path.resolve(__dirname,f)).toString()  
+  console.error(
+    help ? readFile('README.md') + "\n" : '',
+    'fix-log decorate version:', JSON.parse(readFile('package.json')).version
+  )
+  process.exit()
+}
+
 const [skipArr, keepArr] = [skip, keep]
   .map(a => a.split(' ').filter(x => x !== ''))
 
