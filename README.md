@@ -10,7 +10,8 @@ A Node.js command line parser for FIX protocol messages. This decorates FIX mess
 You can pipe FIX message containing logs to `fix-log-decorate`:
 
 ```sh
-echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=30|10=003|" | fix-log-decorate
+echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=30|10=003|" \
+| fix-log-decorate
 ```
 
 Or use `npx fix-log-decorate`, here reading a log file in real time with `tail -f`, skipping heartbeats with `grep -v`, and using some switches to control output:
@@ -38,7 +39,7 @@ npx fix-log-decorate --skip="8 9 10" --usenumber=0 --usenewline=1 --delim=" "
     --skip="9 35 BeginString",
     --keep="8 10 MsgType"
     --delim=|
-    
+
     --help
     --version
 ```

@@ -41,7 +41,7 @@ if (help || version) {
   const readFile = f => fs.readFileSync(path.resolve(__dirname,f)).toString()  
   console.error(
     help ? readFile('README.md') + "\n" : '',
-    'fix-log decorate version:', JSON.parse(readFile('package.json')).version
+    'fix-log-decorate version:', JSON.parse(readFile('package.json')).version
   )
   process.exit()
 }
@@ -50,6 +50,12 @@ const [skipArr, keepArr] = [skip, keep]
   .map(a => a.split(' ').filter(x => x !== ''))
 
 const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|')
+
+const decorate = {
+  name: x => chalk.green(x),
+  lookup: x => chalk.inverse.blue(x),
+  msgType: x => x === "Heartbeat" ? chalk.inverse.grey(x) : chalk.inverse.red(x),
+}
 
 const fieldReplacer = (match, fieldNo, value) => {
   const newLine = fieldNo == 10 && usenewline ? '\n' : ''
@@ -61,11 +67,11 @@ const fieldReplacer = (match, fieldNo, value) => {
     ? newLine
     : [
         usenumber ? fieldNo : '',
-        usename && tagLU?.[fieldNo] ? chalk.green(tagLU?.[fieldNo]?.desc) : '',
+        usename && tagLU?.[fieldNo] ? decorate['name'](tagLU?.[fieldNo]?.desc) : '',
         '=',
         usevalue || (!(tagLU?.[fieldNo]?.enum?.[value]) )? value : '',
-        fieldNo == 35 ? chalk.inverse.blue(msgTypeLU[value]?.msgname) : '',
-        fieldNo != 35 && uselookup && tagLU?.[fieldNo]?.enum?.[value] ? chalk.inverse.red(tagLU?.[fieldNo]?.enum?.[value]) : '',
+        fieldNo == 35 ? decorate['msgType'](msgTypeLU[value]?.msgname) : '',
+        fieldNo != 35 && uselookup && tagLU?.[fieldNo]?.enum?.[value] ? decorate['lookup'](tagLU?.[fieldNo]?.enum?.[value]) : '',
         delim,
         newLine
       ].join('')
@@ -78,5 +84,5 @@ pipeline(
   map(pipeAsDelim),
   map(highlightFieldNames),
   process.stdout,
-  err => err && console.error('fix-log-decorate  error', err)
+  err => err && console.error('fix-log-decorate error', err)
 )
