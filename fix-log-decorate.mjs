@@ -1,14 +1,24 @@
 #!/usr/bin/env node
 
-import { pipeline } from 'stream'
-import map from 'through2-map'
+import { pipeline, Transform } from 'stream'
 import chalk from 'chalk'
-import { msgTypeLU, tagLU } from './fixlu.mjs'
 import minimist from 'minimist'
 
 import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
+
+import { msgTypeLU, tagLU } from './fixlu.mjs'
+
+const map = fn => new Transform({
+  transform(chunk, encoding, callback) {
+    try {
+      callback(null, fn(chunk))
+    } catch(e){
+      callback(e)
+    }
+  }
+})
 
 const {
   usenumber,
@@ -54,7 +64,7 @@ const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|')
 const decorate = {
   name: x => chalk.green(x),
   lookup: x => chalk.inverse.blue(x),
-  msgType: x => x === "Heartbeat" ? chalk.inverse.grey(x) : chalk.inverse.red(x),
+  msgType: x => chalk.inverse[x === "Heartbeat" ? 'grey':'red'](x),
 }
 
 const fieldReplacer = (match, fieldNo, value) => {
@@ -62,7 +72,6 @@ const fieldReplacer = (match, fieldNo, value) => {
   const skipField =
     (skipArr.includes(fieldNo) || skipArr.includes(tagLU?.[fieldNo]?.desc)) ||
     (keepArr.length > 0 && !keepArr.includes(fieldNo) && !keepArr.includes(tagLU?.[fieldNo]?.desc))
-
   return skipField
     ? newLine
     : [
@@ -77,12 +86,19 @@ const fieldReplacer = (match, fieldNo, value) => {
       ].join('')
 }
 
-const highlightFieldNames = x => ('' + x).replace(/(\d+)=([^|]*)\|/g, fieldReplacer)
+const highlightFieldNames = x => {
+  try {
+    return ('' + x).replace(/(\d+)=([^|]*)\|/g, fieldReplacer)
+  } catch (e){
+    console.error("fix-log-decorate highFieldNames error:",e)
+    return x;
+  }
+}
 
 pipeline(
   process.stdin,
   map(pipeAsDelim),
   map(highlightFieldNames),
   process.stdout,
-  err => err && console.error('fix-log-decorate error', err)
+  err => err && console.error('fix-log-decorate error:', err)
 )
