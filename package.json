@@ -28,7 +28,6 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^5.1.2",
-    "minimist": "^1.2.7",
-    "through2-map": "^3.0.0"
+    "minimist": "^1.2.7"
   }
 }
