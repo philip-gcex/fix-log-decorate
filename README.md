@@ -14,11 +14,11 @@ echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=3
 | fix-log-decorate
 ```
 
-Or use `npx fix-log-decorate`, here reading a log file in real time with `tail -f`, skipping heartbeats with `grep -v`, and using some switches to control output:
+Or use `npx fix-log-decorate`, here reading a log file in real time with `tail -f`, and using some switches to control output. `grep --line-buffered -v 35=0` will skip heartbeats: the line-buffered is sometimes necessary to get lines to pass through the pipe.
 
 ```sh
 tail -f someFIXlog.log | \
-grep -v 35=0 | \
+grep --line-buffered -v 35=0 | \
 npx fix-log-decorate --skip="8 9 10" --usenumber=0 --usenewline=1 --delim=" "
 ```
 

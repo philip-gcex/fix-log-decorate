@@ -56,8 +56,8 @@ if (help || version) {
   process.exit()
 }
 
-const [skipArr, keepArr] = [skip, keep]
-  .map(a => a.split(' ').filter(x => x !== ''))
+const splitBySpace = a => a.split(' ').filter(x => x !== '')
+const [skipArr, keepArr] = [skip, keep].map(splitBySpace)
 
 const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|')
 
