@@ -26,6 +26,7 @@ const {
   usevalue,
   uselookup,
   usenewline,
+  skipseen,
   skip,
   keep,
   delim,
@@ -38,6 +39,7 @@ const {
     usevalue: 1,
     uselookup: 1,
     usenewline: 0,
+    skipseen: 1,
     skip: '',
     keep: '',
     delim: '|',
@@ -65,33 +67,47 @@ const decorate = {
   name: x => chalk.green(x),
   lookup: x => chalk.inverse.blue(x),
   msgType: x => chalk.inverse[x === "Heartbeat" ? 'grey':'red'](x),
+  fieldNo: (useColour, x) => useColour ? chalk.grey(x) : x,
 }
 
-const fieldReplacer = (match, fieldNo, value) => {
+const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
+
+  if (fieldNo == 8){alreadySeen={}}    // reset Seen records on new row   
+  const alreadySeenValueKey = `${fieldNo}_${value}`
+
   const newLine = fieldNo == 10 && usenewline ? '\n' : ''
   const skipField =
     (skipArr.includes(fieldNo) || skipArr.includes(tagLU?.[fieldNo]?.desc)) ||
     (keepArr.length > 0 && !keepArr.includes(fieldNo) && !keepArr.includes(tagLU?.[fieldNo]?.desc))
-  return skipField
+
+  const output = skipField
     ? newLine
     : [
-        usenumber ? fieldNo : '',
-        usename && tagLU?.[fieldNo] ? decorate['name'](tagLU?.[fieldNo]?.desc) : '',
+        usenumber ? decorate['fieldNo'](alreadySeen[fieldNo],fieldNo) : '',
+        usename && tagLU?.[fieldNo] && (!skipseen || !alreadySeen[fieldNo]) ? 
+          decorate['name'](tagLU?.[fieldNo]?.desc) : '',   //  
         '=',
         usevalue || (!(tagLU?.[fieldNo]?.enum?.[value]) )? value : '',
         fieldNo == 35 ? decorate['msgType'](msgTypeLU[value]?.msgname) : '',
-        fieldNo != 35 && uselookup && tagLU?.[fieldNo]?.enum?.[value] ? decorate['lookup'](tagLU?.[fieldNo]?.enum?.[value]) : '',
+        fieldNo != 35 && uselookup && (!skipseen || !alreadySeen[alreadySeenValueKey]) && 
+          tagLU?.[fieldNo]?.enum?.[value] ? 
+          decorate['lookup'](tagLU?.[fieldNo]?.enum?.[value]) : '',
         delim,
         newLine
       ].join('')
+  
+  alreadySeen[fieldNo] = true
+  alreadySeen[alreadySeenValueKey] = true
+      
+  return output
 }
 
-const highlightFieldNames = x => {
+const highlightFieldNames = row => {
   try {
-    return ('' + x).replace(/(\d+)=([^|]*)\|/g, fieldReplacer)
+    return ('' + row).replace(/(\d+)=([^|]*)\|/g, fieldReplacer())
   } catch (e){
     console.error("fix-log-decorate highFieldNames error:",e)
-    return x;
+    return row;
   }
 }
 

@@ -14,7 +14,7 @@ echo "8=FIX.4.1|9=61|35=A|34=1|49=EXEC|52=20121105-23:24:06|56=BANZAI|98=0|108=3
 | fix-log-decorate
 ```
 
-Or use `npx fix-log-decorate`, here reading a log file in real time with `tail -f`, and using some switches to control output. `grep --line-buffered -v 35=0` will skip heartbeats: the line-buffered is sometimes necessary to get lines to pass through the pipe.
+Or use `npx fix-log-decorate`, here reading a log file in real time with `tail -f`, and using some switches to control output. `grep --line-buffered -v 35=0` will skip heartbeats: `--line-buffered` is sometimes necessary to get lines to pass through the pipe.
 
 ```sh
 tail -f someFIXlog.log | \
@@ -36,6 +36,7 @@ npx fix-log-decorate --skip="8 9 10" --usenumber=0 --usenewline=1 --delim=" "
     --usevalue=[1|0]
     --uselookup=[1|0]
     --usenewline=[0|1]
+    --skipseen=[1|0]
     --skip="9 35 BeginString",
     --keep="8 10 MsgType"
     --delim=|
@@ -44,7 +45,8 @@ npx fix-log-decorate --skip="8 9 10" --usenumber=0 --usenewline=1 --delim=" "
     --version
 ```
 
-* `--use...` switches control which elements are shown. They default to on (1), except for `--usenewline`, which defaults to off (0). 
+* `--use...` switches control which elements are shown. They default to on (1), except for `--usenewline`, which defaults to off (0).
+* `--skipseen` controls whether field and lookup values which are repeated are displayed again. This is useful to keep output size for messages with repeated fields (such as market data) small. Defaults to on (1). 
 * `--skip` and `--keep` allow exclusion or inclusion of fields by name or number. Default to nothing (i.e. include all fields). Fields are delimited by spaces.
 * `--delim` sets the output delimiter (both "|" and ascii code 1 are accepted as delimiter input). Default is "|".
 
