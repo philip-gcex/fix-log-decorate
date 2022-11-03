@@ -1,6 +1,6 @@
 {
   "name": "fix-log-decorate",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Decorates FIX protocol messages in console to make them easier to read",
   "bin": "./fix-log-decorate.mjs",
   "main": "fix-log-decorate.mjs",
