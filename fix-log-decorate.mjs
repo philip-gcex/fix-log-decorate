@@ -69,9 +69,9 @@ const decorate = {
   name: ({fieldName}) => 
     chalk.green(fieldName),
   value: ({value, fieldName}) => 
-    fieldName==="SenderCompID" ? chalk.magenta(value) :
-    fieldName==="TargetCompID" ? chalk.yellow(value) :
-    fieldName==="MsgSeqNum" ? chalk.cyan(value) :
+    fieldName === "SenderCompID" ? chalk.magenta(value) :
+    fieldName === "TargetCompID" ? chalk.yellow(value) :
+    fieldName === "MsgSeqNum" ? chalk.cyan(value) :
     value,
   lookup: ({lookup, fieldName}) =>
     chalk.inverse[
@@ -84,12 +84,12 @@ const decorate = {
 const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
 
   //alreadySeen is a closure state object for tracking items already seen per messsage
-  if (fieldNo == 8){alreadySeen={}}    // reset seen records on new row   
+  if (fieldNo == 8){alreadySeen={}}    // reset seen records on new message   
   const valueAlreadySeenKey = `${fieldNo}_${value}`
 
   const newLine = fieldNo == 10 && usenewline ? '\n' : ''
-  const lookup = tagLU?.[fieldNo]?.enum?.[value]
   const fieldName = tagLU?.[fieldNo]?.desc
+  const lookup = tagLU?.[fieldNo]?.enum?.[value]
 
   const includesField = arr => arr.includes(fieldNo) || arr.includes(fieldName)
   const skipField = includesField(skipArr) || (keepArr.length > 0 && !includesField(keepArr)) 
@@ -97,16 +97,17 @@ const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
   const outputField = (type, condition) => condition ? decorate[type]({
     fieldNo, fieldName, value, lookup,
     fieldAlreadySeen: alreadySeen[fieldNo],
-    valueAlreadySeen: alreadySeen[valueAlreadySeenKey]
+    valueAlreadySeen: alreadySeen[valueAlreadySeenKey],
   }) : ''
 
+  const notYetSeen = x => !skipseen || !alreadySeen[x]
   const output = skipField ? newLine : 
     [
       outputField('fieldNo', usenumber ),
-      outputField('name', usename && fieldName && !(skipseen && alreadySeen[fieldNo]) ),
+      outputField('name', usename && fieldName && notYetSeen(fieldNo) ),
       '=',
       outputField('value', usevalue || !lookup ),
-      outputField('lookup', uselookup && lookup && !(skipseen && alreadySeen[valueAlreadySeenKey]) ),
+      outputField('lookup', uselookup && lookup && notYetSeen(valueAlreadySeenKey) ),
       delim,
       newLine
     ].join('')
