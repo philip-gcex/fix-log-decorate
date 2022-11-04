@@ -64,40 +64,55 @@ const [skipArr, keepArr] = [skip, keep].map(splitBySpace)
 const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|')
 
 const decorate = {
-  name: x => chalk.green(x),
-  lookup: x => chalk.inverse.blue(x),
-  msgType: x => chalk.inverse[x === "Heartbeat" ? 'grey':'red'](x),
-  fieldNo: (useColour, x) => useColour ? chalk.grey(x) : x,
+  fieldNo: ({fieldNo, fieldAlreadySeen}) => 
+    fieldAlreadySeen ? chalk.grey(fieldNo) : fieldNo,  
+  name: ({fieldName}) => 
+    chalk.green(fieldName),
+  value: ({value, fieldName}) => 
+    fieldName==="SenderCompID" ? chalk.magenta(value) :
+    fieldName==="TargetCompID" ? chalk.yellow(value) :
+    fieldName==="MsgSeqNum" ? chalk.cyan(value) :
+    value,
+  lookup: ({lookup, fieldName}) =>
+    chalk.inverse[
+      (fieldName ==="MsgType" && lookup === "Heartbeat") ? "grey" :
+      (fieldName ==="MsgType") ? "red" :
+      "blue"
+    ](lookup),
 }
 
 const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
 
-  if (fieldNo == 8){alreadySeen={}}    // reset Seen records on new row   
-  const alreadySeenValueKey = `${fieldNo}_${value}`
+  if (fieldNo == 8){alreadySeen={}}    // reset seen records on new row   
+  const valueAlreadySeenKey = `${fieldNo}_${value}`
 
   const newLine = fieldNo == 10 && usenewline ? '\n' : ''
   const skipField =
     (skipArr.includes(fieldNo) || skipArr.includes(tagLU?.[fieldNo]?.desc)) ||
     (keepArr.length > 0 && !keepArr.includes(fieldNo) && !keepArr.includes(tagLU?.[fieldNo]?.desc))
 
-  const output = skipField
-    ? newLine
-    : [
-        usenumber ? decorate['fieldNo'](alreadySeen[fieldNo],fieldNo) : '',
-        usename && tagLU?.[fieldNo] && (!skipseen || !alreadySeen[fieldNo]) ? 
-          decorate['name'](tagLU?.[fieldNo]?.desc) : '',   //  
-        '=',
-        usevalue || (!(tagLU?.[fieldNo]?.enum?.[value]) )? value : '',
-        fieldNo == 35 ? decorate['msgType'](msgTypeLU[value]?.msgname) : '',
-        fieldNo != 35 && uselookup && (!skipseen || !alreadySeen[alreadySeenValueKey]) && 
-          tagLU?.[fieldNo]?.enum?.[value] ? 
-          decorate['lookup'](tagLU?.[fieldNo]?.enum?.[value]) : '',
-        delim,
-        newLine
-      ].join('')
+  const lookup = tagLU?.[fieldNo]?.enum?.[value]
+  const fieldName = tagLU?.[fieldNo]?.desc
+
+  const outputField = (type, condition) => condition ? decorate[type]({
+    fieldNo, fieldName, value, lookup,
+    fieldAlreadySeen: alreadySeen[fieldNo],
+    valueAlreadySeen: alreadySeen[alreadySeenValueKey]
+  }) : ''
+
+  const output = skipField ? newLine : 
+    [
+      outputField ('fieldNo', usenumber ),
+      outputField ('name', usename && fieldName && !(skipseen && alreadySeen[fieldNo]) ),
+      '=',
+      outputField('value', usevalue || !lookup ),
+      outputField('lookup', uselookup && lookup && !(skipseen && alreadySeen[valueAlreadySeenKey]) ),
+      delim,
+      newLine
+    ].join('')
   
   alreadySeen[fieldNo] = true
-  alreadySeen[alreadySeenValueKey] = true
+  alreadySeen[valueAlreadySeenKey] = true
       
   return output
 }

@@ -5,6 +5,8 @@ A Node.js command line parser for FIX protocol messages. This decorates FIX mess
 * Node.js is required (https://nodejs.org/en/download/).
 * Then `npm install -g fix-log-decorate` (or otherwise just use `npx fix-log-decorate` directly in the command line).
 
+To update, you can run `npm update -g fix-log-decorate`
+
 ## Example
 
 You can pipe FIX message containing logs to `fix-log-decorate`:
