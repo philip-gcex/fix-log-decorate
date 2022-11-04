@@ -29,6 +29,7 @@ const {
   skipseen,
   skip,
   keep,
+  highlight,
   delim,
   help,
   version,
@@ -42,6 +43,7 @@ const {
     skipseen: 1,
     skip: '',
     keep: '',
+    highlight: '',
     delim: '|',
     help: false,
     version: false,
@@ -59,26 +61,29 @@ if (help || version) {
 }
 
 const splitBySpace = a => a.split(' ').filter(x => x !== '')
-const [skipArr, keepArr] = [skip, keep].map(splitBySpace)
+const [skipArr, keepArr, highlightArr] = [skip, keep, highlight].map(splitBySpace)
 
-const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|')
+const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|').replace(/\\x01/g, '|')
+
 
 const decorate = {
-  fieldNo: ({fieldNo, fieldAlreadySeen}) => 
-    fieldAlreadySeen ? chalk.grey(fieldNo) : fieldNo,  
-  name: ({fieldName}) => 
-    chalk.green(fieldName),
-  value: ({value, fieldName}) => 
-    fieldName === "SenderCompID" ? chalk.magenta(value) :
-    fieldName === "TargetCompID" ? chalk.yellow(value) :
-    fieldName === "MsgSeqNum" ? chalk.cyan(value) :
-    value,
-  lookup: ({lookup, fieldName}) =>
-    chalk.inverse[
+  fieldNo: ({fieldNo, fieldAlreadySeen, highlighter}) => 
+    highlighter(chalk[fieldAlreadySeen ? 'grey':'white'])(fieldNo),  
+  name: ({fieldName, highlighter}) => 
+    highlighter(chalk.green)(fieldName),
+  value: ({value, fieldName, valueHighlighter}) => 
+    valueHighlighter(
+      fieldName === "SenderCompID" ? chalk.magenta :
+      fieldName === "TargetCompID" ? chalk.cyanBright :
+      fieldName === "MsgSeqNum" ? chalk.yellowBright :
+      chalk.white
+    )(value),
+  lookup: ({lookup, fieldName, valueHighlighter}) =>
+    valueHighlighter(chalk[fieldName ==="MsgType" ? 'inverse':'bold'][
       (fieldName ==="MsgType" && lookup === "HEARTBEAT") ? "grey" :
       (fieldName ==="MsgType") ? "red" :
       "blue"
-    ](lookup),
+    ])(lookup),
 }
 
 const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
@@ -92,12 +97,15 @@ const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
   const lookup = tagLU?.[fieldNo]?.enum?.[value]
 
   const includesField = arr => arr.includes(fieldNo) || arr.includes(fieldName)
+  const includesValue = arr => arr.includes(value) || arr.includes(lookup)
   const skipField = includesField(skipArr) || (keepArr.length > 0 && !includesField(keepArr)) 
 
   const outputField = (type, condition) => condition ? decorate[type]({
     fieldNo, fieldName, value, lookup,
     fieldAlreadySeen: alreadySeen[fieldNo],
     valueAlreadySeen: alreadySeen[valueSeenKey],
+    highlighter: chalk => includesField(highlightArr) ? chalk.bgYellow.black : chalk,
+    valueHighlighter: chalk => includesValue(highlightArr) ? chalk.bgYellow.black : chalk,
   }) : ''
 
   const notYetSeen = x => !skipseen || !alreadySeen[x]

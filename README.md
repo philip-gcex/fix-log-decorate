@@ -41,6 +41,7 @@ npx fix-log-decorate --skip="8 9 10" --usenumber=0 --usenewline=1 --delim=" "
     --skipseen=[1|0]
     --skip="9 35 BeginString",
     --keep="8 10 MsgType"
+    --highlight="52 Symbol BTCUSD 1583.81"
     --delim=|
 
     --help
@@ -50,6 +51,7 @@ npx fix-log-decorate --skip="8 9 10" --usenumber=0 --usenewline=1 --delim=" "
 * `--use...` switches control which elements are shown. They default to on (1), except for `--usenewline`, which defaults to off (0).
 * `--skipseen` controls whether field and lookup values which are repeated are displayed again. This is useful to keep output size for messages with repeated fields (such as market data) small. Defaults to on (1). 
 * `--skip` and `--keep` allow exclusion or inclusion of fields by name or number. Default to nothing (i.e. include all fields). Fields are delimited by spaces.
+* `--highlight` is a space delimited list of field names, numbers, values and lookup values to highlight in yellow, to make them stand out. Defaults to nothing.
 * `--delim` sets the output delimiter (both "|" and ascii code 1 are accepted as delimiter input). Default is "|".
 
 ## References
