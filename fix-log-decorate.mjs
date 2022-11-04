@@ -83,6 +83,7 @@ const decorate = {
 
 const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
 
+  //alreadySeen is a closure state object for tracking items already seen per messsage
   if (fieldNo == 8){alreadySeen={}}    // reset seen records on new row   
   const valueAlreadySeenKey = `${fieldNo}_${value}`
 
