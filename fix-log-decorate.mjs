@@ -75,7 +75,7 @@ const decorate = {
     value,
   lookup: ({lookup, fieldName}) =>
     chalk.inverse[
-      (fieldName ==="MsgType" && lookup === "Heartbeat") ? "grey" :
+      (fieldName ==="MsgType" && lookup === "HEARTBEAT") ? "grey" :
       (fieldName ==="MsgType") ? "red" :
       "blue"
     ](lookup),
