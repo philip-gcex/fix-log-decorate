@@ -85,7 +85,7 @@ const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
 
   //alreadySeen is a closure state object for tracking items already seen per messsage
   if (fieldNo == 8){alreadySeen={}}    // reset seen records on new message   
-  const valueAlreadySeenKey = `${fieldNo}_${value}`
+  const valueSeenKey = `${fieldNo}_${value}`   
 
   const newLine = fieldNo == 10 && usenewline ? '\n' : ''
   const fieldName = tagLU?.[fieldNo]?.desc
@@ -97,7 +97,7 @@ const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
   const outputField = (type, condition) => condition ? decorate[type]({
     fieldNo, fieldName, value, lookup,
     fieldAlreadySeen: alreadySeen[fieldNo],
-    valueAlreadySeen: alreadySeen[valueAlreadySeenKey],
+    valueAlreadySeen: alreadySeen[valueSeenKey],
   }) : ''
 
   const notYetSeen = x => !skipseen || !alreadySeen[x]
@@ -107,13 +107,14 @@ const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
       outputField('name', usename && fieldName && notYetSeen(fieldNo) ),
       '=',
       outputField('value', usevalue || !lookup ),
-      outputField('lookup', uselookup && lookup && notYetSeen(valueAlreadySeenKey) ),
+      outputField('lookup', uselookup && lookup && notYetSeen(valueSeenKey) ),
       delim,
       newLine
     ].join('')
   
+  // update state
   alreadySeen[fieldNo] = true
-  alreadySeen[valueAlreadySeenKey] = true
+  alreadySeen[valueSeenKey] = true
       
   return output
 }
