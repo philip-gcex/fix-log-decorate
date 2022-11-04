@@ -87,23 +87,22 @@ const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
   const valueAlreadySeenKey = `${fieldNo}_${value}`
 
   const newLine = fieldNo == 10 && usenewline ? '\n' : ''
-  const skipField =
-    (skipArr.includes(fieldNo) || skipArr.includes(tagLU?.[fieldNo]?.desc)) ||
-    (keepArr.length > 0 && !keepArr.includes(fieldNo) && !keepArr.includes(tagLU?.[fieldNo]?.desc))
-
   const lookup = tagLU?.[fieldNo]?.enum?.[value]
   const fieldName = tagLU?.[fieldNo]?.desc
+
+  const includesField = arr => arr.includes(fieldNo) || arr.includes(fieldName)
+  const skipField = includesField(skipArr) || (keepArr.length > 0 && !includesField(keepArr)) 
 
   const outputField = (type, condition) => condition ? decorate[type]({
     fieldNo, fieldName, value, lookup,
     fieldAlreadySeen: alreadySeen[fieldNo],
-    valueAlreadySeen: alreadySeen[alreadySeenValueKey]
+    valueAlreadySeen: alreadySeen[valueAlreadySeenKey]
   }) : ''
 
   const output = skipField ? newLine : 
     [
-      outputField ('fieldNo', usenumber ),
-      outputField ('name', usename && fieldName && !(skipseen && alreadySeen[fieldNo]) ),
+      outputField('fieldNo', usenumber ),
+      outputField('name', usename && fieldName && !(skipseen && alreadySeen[fieldNo]) ),
       '=',
       outputField('value', usevalue || !lookup ),
       outputField('lookup', uselookup && lookup && !(skipseen && alreadySeen[valueAlreadySeenKey]) ),
