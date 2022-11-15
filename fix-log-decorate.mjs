@@ -134,7 +134,7 @@ const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
 
 const highlightFieldNames = row => {
   try {
-    return ('' + row).replace(/(\d+)=([^|]*)\|/g, fieldReplacer())
+    return ('' + row).replace(/(\d+)=([^|\n]*)\|/g, fieldReplacer())
   } catch (e){
     console.error("fix-log-decorate highFieldNames error:",e)
     return row;
