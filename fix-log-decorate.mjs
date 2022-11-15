@@ -65,10 +65,12 @@ const [skipArr, keepArr, highlightArr] = [skip, keep, highlight].map(splitBySpac
 
 const pipeAsDelim = x => ('' + x).replace(/\x01/g, '|').replace(/\\x01/g, '|')
 
+const headerFields = ["BeginString","BodyLength","MsgType","SenderCompID","TargetCompID","MsgSeqNum","SendingTime","CheckSum"]
+
 const decorate = {
   fieldNo: ({fieldSeen}) => 
     chalk[fieldSeen ? 'grey':'white'],  
-  fieldName: ({}) => chalk.green,
+  fieldName: ({fieldName}) => chalk[headerFields.includes(fieldName)? "green" : "greenBright"],
   value: ({fieldName}) => 
     fieldName === "SenderCompID" ? chalk.inverse.magenta :
     fieldName === "TargetCompID" ? chalk.magenta :     // cyanBright
@@ -88,7 +90,7 @@ const includes = (arr, vals) => vals.some(x=>arr.includes(x))
 const fieldReplacer = (alreadySeen = {}) => (match, fieldNo, value) => {
 
   //alreadySeen is a closure state object for tracking items already seen per messsage
-  if (fieldNo == 8){alreadySeen={}}    // reset seen records on new message   
+  if (fieldNo == 8 || fieldNo == 10){alreadySeen={}}    // reset seen records on new message (in case more than one per line)
   const valueSeenKey = `${fieldNo}_${value}`   
 
   const newLine = usenewline && fieldNo == 10 ? '\n' : ''
