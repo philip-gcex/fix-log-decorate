@@ -73,7 +73,7 @@ const decorate = {
   fieldName: ({fieldName}) => chalk[headerFields.includes(fieldName)? "green" : "greenBright"],
   value: ({fieldName}) => 
     fieldName === "SenderCompID" ? chalk.inverse.magenta :
-    fieldName === "TargetCompID" ? chalk.magenta :     // cyanBright
+    fieldName === "TargetCompID" ? chalk.magenta :     
     fieldName === "MsgSeqNum" ? chalk.yellowBright :
     chalk.white,
   lookup: ({lookup, fieldName}) => chalk
